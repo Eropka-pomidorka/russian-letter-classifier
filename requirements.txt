@@ -1,0 +1,4 @@
+flet
+pillow
+numpy
+matplotlib
