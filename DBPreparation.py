@@ -19,16 +19,30 @@ def augmentation(images):
     for image in images:
         # Поворот изображения на случайный угол
         angle = np.random.randint(-15, 15)
-        rotated_image = cv2.warpAffine(image, cv2.getRotationMatrix2D((image.shape[1] / 2, image.shape[0] / 2), angle, 1.0), (image.shape[1], image.shape[0]), borderValue=(255, 255, 255))
+        rotated_image = cv2.warpAffine(
+            image, 
+            cv2.getRotationMatrix2D(
+                (image.shape[1] / 2, image.shape[0] / 2), angle, 1.0
+            ), 
+            (image.shape[1], image.shape[0]), 
+            borderValue=(255, 255, 255)
+            )
         
         # Случайное смещение изображения по горизонтали и вертикали
         dx, dy = np.random.randint(-5, 5, 2)
-        translated_image = cv2.warpAffine(rotated_image, np.float32([[1, 0, dx], [0, 1, dy]]), (image.shape[1], image.shape[0]), borderValue=(255, 255, 255))
+        translated_image = cv2.warpAffine(
+            rotated_image, 
+            np.float32([[1, 0, dx], [0, 1, dy]]), 
+            (image.shape[1], image.shape[0]), 
+            borderValue=(255, 255, 255)
+        )
             
         # Изменение яркости и контрастности
         alpha = np.random.uniform(1.0, 1.5)
         beta = np.random.randint(-20, 20)
-        brightness_contrast_image = cv2.convertScaleAbs(translated_image, alpha=alpha, beta=beta)
+        brightness_contrast_image = cv2.convertScaleAbs(
+            translated_image, alpha=alpha, beta=beta
+        )
         augmented_images.append(brightness_contrast_image)
             
         # Добавление шума к изображению
@@ -65,7 +79,12 @@ for number_of_directory in range(len(os.listdir("DB"))):
 
     random.shuffle(image_directories)
     # записываем сами изображения в список изображений
-    images = [cv2.imread("allgr/{}".format(image_directories[pic_path]), cv2.IMREAD_GRAYSCALE) for pic_path in range(len(image_directories))]
+    images = [
+        cv2.imread(
+            "allgr/{}".format(image_directories[pic_path]), 
+            cv2.IMREAD_GRAYSCALE
+        ) for pic_path in range(len(image_directories))
+    ]
     image_directories.clear()
     
     for image in range(len(images)):
@@ -100,15 +119,19 @@ for i in range(len(training_data)):
 
 path_train = "Training_data"
 path_test = "Test_data"
-data_Train = {"Pic" : letter_pic,
-              "letter_num" : letter_num}
-data_Test = {"Pic" : letter_pic_for_test,
-             "letter_num" : letter_num_for_test}
-file_1 = open(path_test, "w")
-file_2 = open(path_train, "w")
-print("Сохранение данных для обучения")
-json.dump(data_Train, file_1)
-print("Сохранение данных для тестирования")
-json.dump(data_Test, file_2)
-file_1.close()
-file_2.close()
+data_Train = {
+    "Pic" : letter_pic,
+    "letter_num" : letter_num
+}
+data_Test = {
+    "Pic" : letter_pic_for_test,
+    "letter_num" : letter_num_for_test
+}
+
+with open(path_test, "w") as file_1:
+    print("Сохранение данных для обучения")
+    json.dump(data_Train, file_1)
+
+with open(path_train, "w") as file_2:
+    print("Сохранение данных для тестирования")
+    json.dump(data_Test, file_2)
